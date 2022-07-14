@@ -16,22 +16,22 @@ spec:
         {{- include "mychart.labels" . | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ include "mychart.fullname" . }}
+      serviceAccountName: {{ include "mychart.serviceAccountName" . }}
       {{- end }}
       volumes:
-      - name: nginx-volume
+      - name: {{ include "mychart.fullname" . }}
         configMap:
           name: {{ include "mychart.fullname" . }}
           items:
-          - key: index.html
-            path: index.html
+          - key: {{ .Values.configMap.item.key }}
+            path: {{ .Values.configMap.item.path }}
       containers:
-        - name: testchart
-          image: "nginx:1.16.0"
-          imagePullPolicy: IfNotPresent
+        - name: {{ .Values.container.name }}
+          image: "{{ .Values.image.repository }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.container.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -42,5 +42,5 @@ spec:
               path: /
               port: http
           volumeMounts:
-          - name: nginx-volume
-            mountPath: /usr/share/nginx/html
+          - name: {{ include "mychart.fullname" . }}
+            mountPath: {{ .Values.volumeMount.mountPath }}

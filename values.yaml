@@ -10,6 +10,10 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+container:
+  name: mychart-container
+  port: 80
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -80,3 +84,10 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+volumeMount:
+  mountPath: /usr/share/nginx/html
+  
+configMap:
+  item:
+     key: index.html
+     path: index.html
